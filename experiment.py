@@ -33,12 +33,20 @@ def main(cfg: DictConfig) -> None:
             tio.ZNormalization(),
             tio.EnsureShapeMultiple(8),
         ]),
-        augmentation_pipeline=tio.OneOf(
-            {
-                tio.RandomAffine(): .8,
-            },
-            p=1,
-        ),
+        augmentation_pipeline=tio.Compose([
+            tio.transforms.RandomElasticDeformation(num_control_points=5,
+                                                    max_displacement=3,
+                                                    locked_borders=2,
+                                                    p=.05),
+            tio.RandomFlip(axes=('LR',), flip_probability=.2),
+            tio.RandomAffine(scales=.5, degrees=10, translation=3, p=.1),
+            tio.RandomMotion(degrees=5, translation=5, num_transforms=2, p=.01),
+            tio.RandomSpike(p=.01),
+            tio.RandomBiasField(coefficients=.2, p=.01),
+            tio.RandomBlur(p=.01),
+            tio.RandomNoise(p=.1),
+            tio.RandomGamma(p=.1),
+        ]),
         postprocessing_pipeline=tio.Compose([tio.OneHot()]))
     # mri_datamodule.setup()
 
