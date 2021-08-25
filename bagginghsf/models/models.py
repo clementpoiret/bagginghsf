@@ -1,3 +1,7 @@
+# import numpy as np
+# import pymia.evaluation.evaluator as eval_
+# import pymia.evaluation.metric as metric
+# import pymia.evaluation.writer as writer
 import pytorch_lightning as pl
 import torch.nn as nn
 import torch.nn.functional as F
@@ -1443,6 +1447,14 @@ class SegmentationModel(pl.LightningModule):
         else:
             raise ValueError(f"Unknown model: {hparams['modeltype']}")
 
+        # Configure metrics
+        # metrics = [
+        #     metric.DiceCoefficient(),
+        #     metric.VolumeSimilarity(),
+        #     metric.MahalanobisDistance()
+        # ]
+        # self.evaluator = eval_.SegmentationEvaluator(metrics, labels)
+
     def forward(self, x, y=None):
         if self.is_capsnet:
             return self._model(x, y)
@@ -1502,6 +1514,11 @@ class SegmentationModel(pl.LightningModule):
         if (batch_idx == 0) and step_name == "Training":
             self.logger.experiment.set_model_graph(self._model, overwrite=True)
 
+        # if step_name == "Test":
+        #     labels = {k: v[0] for k, v in batch["labels_names"].items()}
+        #     evaluator.evaluate(batch["label"]["data"], batch["label"]["data"] * 0.1,
+        #            batch["label"]["stem"][0])
+
         return loss
 
     def training_step(self, batch, batch_idx):
@@ -1532,5 +1549,10 @@ class SegmentationModel(pl.LightningModule):
         #     name = self.classes_names[i] if self.classes_names else i
         #     self.log(f"Validation Dice {name}", per_channel_dice[i])
         #     self.log(f"Validation IoU {name}", per_channel_iou[i])
+
+        return loss
+
+    def test_step(self, batch, batch_idx):
+        loss = self.step(batch, batch_idx, step_name="Test")
 
         return loss

@@ -120,7 +120,8 @@ class MRIDataModule(pl.LightningDataModule):
 
         self.subjects_train_list = [subjects_list[i] for i in train_idx]
         self.subjects_val_list = [subjects_list[i] for i in val_idx]
-        self.subjects_test_list = []
+        # ! WARNING: ONLY FOR TESTING
+        self.subjects_test_list = [subjects_list[i] for i in val_idx]
 
     def train_dataloader(self):
         transforms = [self.preprocessing_pipeline, self.augmentation_pipeline]
@@ -158,9 +159,9 @@ class MRIDataModule(pl.LightningDataModule):
         test_dataset = tio.SubjectsDataset(self.subjects_test_list,
                                            transform=transform)
 
-        #return DataLoader(test_dataset,
-        #            batch_size=self.batch_size,
-        #            num_workers=self.num_workers)
+        return DataLoader(test_dataset,
+                          batch_size=self.batch_size,
+                          num_workers=self.num_workers)
 
 
 def test(path):
