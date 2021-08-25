@@ -1,0 +1,252 @@
+main_path: "/home/cp264607/Datasets/"
+batch_size: 1
+num_workers: 8
+train_ratio: 0.8
+replace: True
+k_sample: Null  # i.e. k = train_ratio * num_samples
+
+datasets:
+  # 1: DG, 2: CA[...], N+1: SUB, N+2: HEAD, N+3: TAIL
+  memodev:
+    path: "hippocampus_memodev_3T"
+    ca_type: "1/23"
+    patterns:
+      right_t2:
+        mri: "**/*t2_bet_hippocampus_right*.nii.gz"
+        label: "*label*t2_hippocampus_right*.nii.gz"
+      left_t2:
+        mri: "**/*t2_bet_hippocampus_left*.nii.gz"
+        label: "*label*t2_hippocampus_left*.nii.gz"
+      right_t1:
+        mri: "**/*t1_bet_hippocampus_right*.nii.gz"
+        label: "*label*t1_hippocampus_right*.nii.gz"
+      left_t1:
+        mri: "**/*t1_bet_hippocampus_left*.nii.gz"
+        label: "*label*t1_hippocampus_left*.nii.gz"
+    labels:
+      1: 2
+      2: 4
+      3: 5
+      4: 3
+      5: 1
+    labels_names:
+      1: "DG"
+      2: "CA1"
+      3: "CA2/3"
+      4: "SUB"
+      5: "TAIL"
+
+  winterburn:
+    # SLRM is set to DG
+    path: "hippocampus_winterburn_3T"
+    ca_type: "1/23"
+    patterns:
+      right_t2:
+        mri: "**/*t2_hippocampus_right*.nii.gz"
+        label: "*t2_labels*hippocampus_right*.nii.gz"
+      left_t2:
+        mri: "**/*t2_hippocampus_left*.nii.gz"
+        label: "*t2_labels*hippocampus_left*.nii.gz"
+      right_t1:
+        mri: "**/*t1_hippocampus_right*.nii.gz"
+        label: "*t1_labels*hippocampus_right*.nii.gz"
+      left_t1:
+        mri: "**/*t1_hippocampus_left*.nii.gz"
+        label: "*t1_labels*hippocampus_left*.nii.gz"
+    labels:
+      1: 2
+      2: 4
+      4: 1
+      5: 3
+      6: 1
+      101: 2
+      102: 4
+      104: 1
+      105: 3
+      106: 1
+    labels_names:
+      1: "DG"
+      2: "CA1"
+      3: "CA2/3"
+      4: "SUB"
+
+  upennpmc:
+    path: "hippocampus_upennpmc_3T"
+    ca_type: "1/2/3"
+    patterns:
+      right_t2:
+        mri: "**/tse*right.nii.gz"
+        label: "tse*right_seg.nii.gz"
+      left_t2:
+        mri: "**/tse*left.nii.gz"
+        label: "tse*left_seg.nii.gz"
+    labels:
+      1: 2
+      2: 3
+      3: 1
+      4: 4
+      5: 6
+      6: 7
+      7: 0
+      8: 5
+      10: 0
+      11: 0
+      12: 0
+      13: 0
+      14: 0
+    labels_names:
+      1: "DG"
+      2: "CA1"
+      3: "CA2"
+      4: "CA3"
+      5: "SUB"
+      6: "HEAD"
+      7: "TAIL"
+
+  umcutrecht:
+    path: "hippocampus_umcutrecht_7T"
+    ca_type: "1/2/3"
+    patterns:
+      right_t2:
+        mri: "**/tse_hippocampus_right*.nii.gz"
+        label: "seg*hippocampus_right*.nii.gz"
+      left_t2:
+        mri: "**/tse_hippocampus_left*.nii.gz"
+        label: "seg*hippocampus_left*.nii.gz"
+    labels:
+      1: 0
+      2: 5
+      3: 2
+      4: 3
+      5: 1
+      6: 4
+      7: 0
+      8: 6
+    labels_names:
+      1: "DG"
+      2: "CA1"
+      3: "CA2"
+      4: "CA3"
+      5: "SUB"
+      6: "TAIL"
+
+  princeton:
+    path: "hippocampus_princeton_3T"
+    ca_type: "1/23"
+    patterns:
+      right_t2:
+        mri: "**/tse*right.nii.gz"
+        label: "tse*right_seg.nii.gz"
+      left_t2:
+        mri: "**/tse*left.nii.gz"
+        label: "tse*left_seg.nii.gz"
+    labels:
+      1: 2
+      2: 3
+      3: 1
+      4: 0
+      5: 0
+      6: 0
+      7: 4
+    labels_names:
+      1: "DG"
+      2: "CA1"
+      3: "CA2/3"
+      4: "SUB"
+
+  magdeburg:
+    path: "hippocampus_magdeburg_7T"
+    ca_type: "1/2/3"
+    patterns:
+      right_t2:
+        mri: "**/tse*right*.nii.gz"
+        label: "seg*hippocampus_right*.nii.gz"
+      left_t2:
+        mri: "**/tse*left*.nii.gz"
+        label: "seg*hippocampus_left*.nii.gz"
+    labels:
+      1: 2
+      2: 3
+      3: 1
+      4: 4
+      5: 6
+      6: 0
+      7: 0
+      8: 5
+      9: 0
+      10: 0
+      11: 0
+      12: 0
+      13: 0
+      17: 0
+    labels_names:
+      1: "DG"
+      2: "CA1"
+      3: "CA2"
+      4: "CA3"
+      5: "SUB"
+      6: "TAIL"
+
+  cind:
+    path: "hippocampus_cind_4T"
+    ca_type: "1/2/3"
+    patterns:
+      t2_normal:
+        mri: "**/*t2_normal.nii.gz"
+        label: "*t2_normal_label.nii.gz"
+      t2_ad:
+        mri: "**/*t2_ad.nii.gz"
+        label: "*t2_ad_label.nii.gz"
+      t2_mci:
+        mri: "**/*t2_mci.nii.gz"
+        label: "*t2_mci_label.nii.gz"
+    labels:
+      1: 2
+      2: 3
+      3: 1
+      4: 4
+      5: 6
+      6: 7
+      7: 0
+      8: 5
+      9: 0
+      10: 0
+    labels_names:
+      1: "DG"
+      2: "CA1"
+      3: "CA2"
+      4: "CA3"
+      5: "SUB"
+      6: "HEAD"
+      7: "TAIL"
+
+  bernasconi:
+    path: "hippocampus_bernasconi_3T"
+    ca_type: "123"
+    patterns:
+      right_t2_hres:
+        mri: "**/*t2w_hires*hippocampus_right*.nii.gz"
+        label: "*hippolabels_hres*hippocampus_right*.nii.gz"
+      left_t2_hres:
+        mri: "**/*t2w_hires*hippocampus_left*.nii.gz"
+        label: "*hippolabels_hres*hippocampus_left*.nii.gz"
+      right_t1_hres:
+        mri: "**/*t1w_hires*hippocampus_right*.nii.gz"
+        label: "*hippolabels_hres*hippocampus_right*.nii.gz"
+      left_t1_hres:
+        mri: "**/*t1w_hires*hippocampus_left*.nii.gz"
+        label: "*hippolabels_hres*hippocampus_left*.nii.gz"
+      right_t1_standard:
+        mri: "**/*t1w_standard*hippocampus_right*.nii.gz"
+        label: "*hippolabels_t1w_standard*hippocampus_right*.nii.gz"
+      left_t1_standard:
+        mri: "**/*t1w_standard*hippocampus_left*.nii.gz"
+        label: "*hippolabels_t1w_standard*hippocampus_left*.nii.gz"
+    labels:
+      1: 2
+      2: 3
+      3: 1
+    labels_names:
+      1: "DG"
+      2: "CA"
+      3: "SUB"
