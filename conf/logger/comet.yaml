@@ -1,0 +1,10 @@
+workspace: "clementpoiret"
+save_dir: "./.comet_ml"
+project_name: "bagginghsf"
+experiment_name: "UNetPoC"
+log_code: True
+log_graph: True
+auto_histogram_weight_logging: True
+auto_histogram_gradient_logging: True
+auto_histogram_activation_logging: True
+auto_log_co2: True

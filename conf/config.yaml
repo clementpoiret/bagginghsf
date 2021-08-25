@@ -2,3 +2,4 @@ defaults:
   - datasets: all
   - lightning: default_trainer
   - models: homogeneous
+  - logger: comet

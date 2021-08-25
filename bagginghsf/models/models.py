@@ -1459,7 +1459,7 @@ class SegmentationModel(pl.LightningModule):
 
         return optimizers
 
-    def step(self, batch, step_name="Training"):
+    def step(self, batch, batch_idx, step_name="Training"):
         x, y = batch["mri"]["data"], batch["label"]["data"]
         _, labels = y.max(dim=1)
 
@@ -1480,8 +1480,12 @@ class SegmentationModel(pl.LightningModule):
                                       head=head,
                                       tail=tail)
             loss = seg_loss + self.hp['α'] * rec_loss
-            self.log(f"{step_name} Segmentation Loss", seg_loss)
-            self.log(f"{step_name} Reconstruction Loss", rec_loss)
+            # self.log(f"{step_name} Segmentation Loss", seg_loss)
+            self.logger.experiment.log_metric(f"{step_name} Segmentation Loss",
+                                              seg_loss)
+            # self.log(f"{step_name} Reconstruction Loss", rec_loss)
+            self.logger.experiment.log_metric(
+                f"{step_name} Reconstruction Loss", rec_loss)
         else:
             y_hat = self.forward(x.float())
             # loss = self.seg_loss(y_hat, labels.long())
@@ -1491,17 +1495,22 @@ class SegmentationModel(pl.LightningModule):
                                   batch["ca_type"][0],
                                   head=head,
                                   tail=tail)
-            self.log(f"{step_name} Segmentation Loss", loss)
+            # self.log(f"{step_name} Segmentation Loss", loss)
+            self.logger.experiment.log_metric(f"{step_name} Segmentation Loss",
+                                              loss)
+
+        if (batch_idx == 0) and step_name == "Training":
+            self.logger.experiment.set_model_graph(self._model, overwrite=True)
 
         return loss
 
     def training_step(self, batch, batch_idx):
-        loss = self.step(batch, step_name="Training")
+        loss = self.step(batch, batch_idx, step_name="Training")
 
         return loss
 
     def validation_step(self, batch, batch_idx):
-        loss = self.step(batch, step_name="Validation")
+        loss = self.step(batch, batch_idx, step_name="Validation")
 
         # # Specific metrics
         # y_hat = F.softmax(y_hat, dim=1)

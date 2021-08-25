@@ -1,10 +1,15 @@
+# Comet must come first
+from comet_ml import Experiment
+
+# Import all other modules
 from functools import partial
 
 import hydra
 import pytorch_lightning as pl
 import torchio as tio
-from hydra import compose, initialize
+# from hydra import compose, initialize
 from omegaconf import DictConfig
+from pytorch_lightning.loggers import CometLogger
 from torch import nn, optim
 
 from bagginghsf.data.loader import load_from_config
@@ -18,6 +23,9 @@ from bagginghsf.models.models import SegmentationModel
 
 @hydra.main(config_path="conf", config_name="config")
 def main(cfg: DictConfig) -> None:
+    # Logger
+    comet_logger = CometLogger(**cfg.logger)
+
     # Load and setup data
     mri_datamodule = load_from_config(cfg.datasets)(
         preprocessing_pipeline=tio.Compose([
@@ -60,7 +68,7 @@ def main(cfg: DictConfig) -> None:
                               learning_rate=learning_rate,
                               is_capsnet=is_capsnet)
 
-    trainer = pl.Trainer(**cfg.lightning)
+    trainer = pl.Trainer(logger=comet_logger, **cfg.lightning)
 
     trainer.fit(model, datamodule=mri_datamodule)
 
