@@ -81,8 +81,8 @@ def main(cfg: DictConfig) -> None:
 
     trainer.fit(model, datamodule=mri_datamodule)
 
-    torch.save(model.state_dict(), "./trained_models/poc")
-    comet_logger.experiment.log_model("poc", "./trained_models/poc")
+    torch.save(model.state_dict(), "poc")
+    comet_logger.experiment.log_model("poc", "poc")
 
     trainer.test(model, datamodule=mri_datamodule)
 

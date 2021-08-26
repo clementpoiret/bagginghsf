@@ -1,6 +1,6 @@
-# import numpy as np
-# import pymia.evaluation.evaluator as eval_
-# import pymia.evaluation.metric as metric
+import numpy as np
+import pymia.evaluation.evaluator as eval_
+import pymia.evaluation.metric as metric
 # import pymia.evaluation.writer as writer
 import pytorch_lightning as pl
 import torch.nn as nn
@@ -1448,11 +1448,11 @@ class SegmentationModel(pl.LightningModule):
             raise ValueError(f"Unknown model: {hparams['modeltype']}")
 
         # Configure metrics
-        # metrics = [
-        #     metric.DiceCoefficient(),
-        #     metric.VolumeSimilarity(),
-        #     metric.MahalanobisDistance()
-        # ]
+        self.metrics = [
+            metric.DiceCoefficient(),
+            metric.VolumeSimilarity(),
+            metric.MahalanobisDistance()
+        ]
         # self.evaluator = eval_.SegmentationEvaluator(metrics, labels)
 
     def forward(self, x, y=None):
@@ -1526,10 +1526,32 @@ class SegmentationModel(pl.LightningModule):
             self.logger.experiment.log_image(
                 output_seg, name=f"Predicted Segmentation: {batch_idx}")
 
-        # if step_name == "Test":
-        #     labels = {k: v[0] for k, v in batch["labels_names"].items()}
-        #     evaluator.evaluate(batch["label"]["data"], batch["label"]["data"] * 0.1,
-        #            batch["label"]["stem"][0])
+        # if (step_name == "Validation") and (self.current_epoch > 0):
+        #     names = {k: v[0] for k, v in batch["labels_names"].items()}
+        #     evaluator = eval_.SegmentationEvaluator(self.metrics, names)
+
+        #     _, output_seg = y_hat.max(dim=1)
+        #     evaluator.evaluate(output_seg, labels, f"val{batch_idx}")
+
+        #     metrics = {
+        #         "val dice":
+        #             np.mean([
+        #                 r.value for r in evaluator.results if r.metric == 'DICE'
+        #             ]),
+        #         "val vs":
+        #             np.mean([
+        #                 r.value
+        #                 for r in evaluator.results
+        #                 if r.metric == 'VOLSMTY'
+        #             ]),
+        #         "val md":
+        #             np.mean([
+        #                 r.value
+        #                 for r in evaluator.results
+        #                 if r.metric == 'MAHLNBS'
+        #             ])
+        #     }
+        #     self.logger.experiment.log_metrics(metrics)
 
         return loss
 
