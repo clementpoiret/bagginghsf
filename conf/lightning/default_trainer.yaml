@@ -7,6 +7,6 @@ log_gpu_memory: true
 max_epochs: 32
 progress_bar_refresh_rate: 8
 benchmark: true
-deterministic: true
+deterministic: false
 stochastic_weight_avg: true
 checkpoint_callback: false

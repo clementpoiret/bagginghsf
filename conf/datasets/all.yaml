@@ -1,7 +1,7 @@
 main_path: "/home/cp264607/Datasets/"
 batch_size: 1
 num_workers: 8
-train_ratio: 0.8
+train_ratio: 0.9
 replace: True
 k_sample: Null  # i.e. k = train_ratio * num_samples
 
