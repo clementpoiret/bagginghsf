@@ -1,0 +1,18 @@
+n: 1
+n_models: 5
+
+models:
+  ResDUNet3D:
+    is_capsnet: False
+    hparams:
+      modeltype: "ResDUNet3D"
+      in_channels: 1
+      out_channels: 6
+      f_maps: 64
+      num_levels: 4
+      layer_order: "crs"
+      dunet_conv_layer_order: "crs"
+      dunet_n_blocks: 6
+      dilated_conv_kernel_size: 3
+      out_channels_dilated_conv: 32
+      dunet_mode": 1

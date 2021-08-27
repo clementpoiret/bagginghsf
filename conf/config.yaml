@@ -1,5 +1,5 @@
 defaults:
   - datasets: all
   - lightning: default_trainer
-  - models: homogeneous
+  - models: homogeneous_zhu
   - logger: comet
