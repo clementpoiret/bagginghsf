@@ -81,11 +81,11 @@ def main(cfg: DictConfig) -> None:
 
     trainer.fit(model, datamodule=mri_datamodule)
 
-    torch.save(model.state_dict(), "unet_test.pt")
-    logger.experiment['model_checkpoints/unet_test'].upload('unet_test.pt')
+    # torch.save(model.state_dict(), "unet_test.pt")
+    # logger.experiment['model_checkpoints/unet_test'].upload('unet_test.pt')
     # logger.experiment.log_model("poc", "unet_test.pt")
 
-    trainer.test(model, datamodule=mri_datamodule)
+    # trainer.test(model, datamodule=mri_datamodule)
     # logger.experiment.stop()
 
 
