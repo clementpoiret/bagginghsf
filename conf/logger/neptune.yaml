@@ -2,3 +2,4 @@ project_name: "clementpoiret/BaggingHSF"
 experiment_name: "UNet_TEST"
 offline_mode: True
 close_after_fit: False
+upload_source_files: ["../../../*.py"]

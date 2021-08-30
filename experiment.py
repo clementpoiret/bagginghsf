@@ -86,7 +86,7 @@ def main(cfg: DictConfig) -> None:
     # logger.experiment.log_model("poc", "unet_test.pt")
 
     trainer.test(model, datamodule=mri_datamodule)
-    logger.experiment.stop()
+    # logger.experiment.stop()
 
 
 if __name__ == "__main__":
