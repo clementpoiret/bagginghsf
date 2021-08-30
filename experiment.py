@@ -2,6 +2,7 @@
 # from comet_ml import Experiment
 
 # Import all other modules
+import os
 from functools import partial
 
 import hydra
@@ -77,6 +78,7 @@ def main(cfg: DictConfig) -> None:
                               learning_rate=learning_rate,
                               is_capsnet=is_capsnet)
 
+    print("cwd:" os.getcwd())
     trainer = pl.Trainer(logger=logger, **cfg.lightning)
 
     trainer.fit(model, datamodule=mri_datamodule)
