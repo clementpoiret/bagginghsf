@@ -78,7 +78,7 @@ def main(cfg: DictConfig) -> None:
                               learning_rate=learning_rate,
                               is_capsnet=is_capsnet)
 
-    print("cwd:" os.getcwd())
+    print("cwd:", os.getcwd())
     trainer = pl.Trainer(logger=logger, **cfg.lightning)
 
     trainer.fit(model, datamodule=mri_datamodule)
