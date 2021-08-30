@@ -2,4 +2,4 @@ defaults:
   - datasets: all
   - lightning: default_trainer
   - models: homogeneous_zhu
-  - logger: comet
+  - logger: neptune

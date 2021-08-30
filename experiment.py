@@ -1,5 +1,5 @@
 # Comet must come first
-from comet_ml import Experiment
+# from comet_ml import Experiment
 
 # Import all other modules
 from functools import partial
@@ -10,7 +10,7 @@ import torch
 import torchio as tio
 # from hydra import compose, initialize
 from omegaconf import DictConfig
-from pytorch_lightning.loggers import CometLogger
+from pytorch_lightning.loggers import NeptuneLogger
 from torch import nn, optim
 
 from bagginghsf.data.loader import load_from_config
@@ -25,7 +25,7 @@ from bagginghsf.models.models import SegmentationModel
 @hydra.main(config_path="conf", config_name="config")
 def main(cfg: DictConfig) -> None:
     # Logger
-    comet_logger = CometLogger(**cfg.logger)
+    logger = NeptuneLogger(**cfg.logger)
 
     # Load and setup data
     mri_datamodule = load_from_config(cfg.datasets)(
@@ -40,7 +40,7 @@ def main(cfg: DictConfig) -> None:
             #                                         locked_borders=2,
             #                                         p=.05),
             tio.RandomFlip(axes=('LR',), flip_probability=.2),
-            tio.RandomAffine(scales=.5, degrees=10, translation=3, p=.1),
+            # tio.RandomAffine(scales=.5, degrees=10, translation=3, p=.1),
             # tio.RandomMotion(degrees=5, translation=5, num_transforms=2, p=.01),
             # tio.RandomSpike(p=.01),
             # tio.RandomBiasField(coefficients=.2, p=.01),
@@ -59,7 +59,7 @@ def main(cfg: DictConfig) -> None:
     optimizer = optim.AdamW
     scheduler = partial(optim.lr_scheduler.CosineAnnealingLR,
                         T_max=cfg.lightning.max_epochs)
-    learning_rate = 1e-3
+    learning_rate = 1e-4
     # classes_names = None
 
     # Load and setup model
@@ -77,14 +77,16 @@ def main(cfg: DictConfig) -> None:
                               learning_rate=learning_rate,
                               is_capsnet=is_capsnet)
 
-    trainer = pl.Trainer(logger=comet_logger, **cfg.lightning)
+    trainer = pl.Trainer(logger=logger, **cfg.lightning)
 
     trainer.fit(model, datamodule=mri_datamodule)
 
-    torch.save(model.state_dict(), "poc")
-    comet_logger.experiment.log_model("poc", "poc")
+    torch.save(model.state_dict(), "unet_test.pt")
+    logger.experiment['model_checkpoints/unet_test'].upload('unet_test.pt')
+    # logger.experiment.log_model("poc", "unet_test.pt")
 
     trainer.test(model, datamodule=mri_datamodule)
+    logger.experiment.stop()
 
 
 if __name__ == "__main__":

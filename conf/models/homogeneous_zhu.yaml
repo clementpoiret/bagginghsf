@@ -8,7 +8,7 @@ models:
       modeltype: "ResidualUNet3D"
       in_channels: 1
       out_channels: 6
-      f_maps: 64
+      f_maps: 32
       num_levels: 4
       layer_order: "crs"
       # dunet_conv_layer_order: "crs"
