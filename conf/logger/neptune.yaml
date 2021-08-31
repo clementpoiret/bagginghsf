@@ -1,6 +1,6 @@
 project: "clementpoiret/BaggingHSF"
 name: "UNet_TEST"
-mode: "async"
+mode: "offline"
 close_after_fit: False
 capture_hardware_metrics: True
 # source_files: ["../../../*.py"]
