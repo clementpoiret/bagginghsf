@@ -11,7 +11,7 @@ import torch
 import torchio as tio
 # from hydra import compose, initialize
 from omegaconf import DictConfig
-from pytorch_lightning.loggers import NeptuneLogger
+from neptune.new.integrations.pytorch_lightning import NeptuneLogger
 from torch import nn, optim
 
 from bagginghsf.data.loader import load_from_config
@@ -83,12 +83,12 @@ def main(cfg: DictConfig) -> None:
 
     trainer.fit(model, datamodule=mri_datamodule)
 
-    # torch.save(model.state_dict(), "unet_test.pt")
-    # logger.experiment['model_checkpoints/unet_test'].upload('unet_test.pt')
+    torch.save(model.state_dict(), "unet_test.pt")
+    logger.experiment['model_checkpoints/unet_test'].upload('unet_test.pt')
     # logger.experiment.log_model("poc", "unet_test.pt")
 
-    # trainer.test(model, datamodule=mri_datamodule)
-    # logger.experiment.stop()
+    trainer.test(model, datamodule=mri_datamodule)
+    logger.experiment.stop()
 
 
 if __name__ == "__main__":

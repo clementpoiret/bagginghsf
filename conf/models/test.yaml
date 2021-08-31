@@ -1,0 +1,13 @@
+n: 1
+n_models: 5
+
+models:
+  UNet3D:
+    is_capsnet: False
+    hparams:
+      modeltype: "UNet3D"
+      in_channels: 1
+      out_channels: 6
+      f_maps: 4
+      num_levels: 3
+      layer_order: "crs"

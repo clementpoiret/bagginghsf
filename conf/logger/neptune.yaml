@@ -1,5 +1,6 @@
-project_name: "clementpoiret/BaggingHSF"
-experiment_name: "UNet_TEST"
-offline_mode: True
+project: "clementpoiret/BaggingHSF"
+name: "UNet_TEST"
+mode: "offline"
 close_after_fit: True
-upload_source_files: ["../../../*.py"]
+capture_hardware_metrics: True
+source_files: ["../../../*.py"]
