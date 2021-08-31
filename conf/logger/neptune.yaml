@@ -3,4 +3,4 @@ name: "UNet_TEST"
 mode: "offline"
 close_after_fit: True
 capture_hardware_metrics: True
-source_files: ["../../../*.py"]
+# source_files: ["../../../*.py"]
