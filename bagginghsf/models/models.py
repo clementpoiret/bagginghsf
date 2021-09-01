@@ -1518,7 +1518,7 @@ class SegmentationModel(pl.LightningModule):
         # if (batch_idx == 0) and step_name == "Training":
         #     self.logger.experiment.set_model_graph(self._model, overwrite=True)
 
-        if (batch_idx in [0, 1]) and (step_name == "Test"):
+        if (batch_idx < 5) and (step_name == "Test"):
             middle_slice = x.shape[-2] // 2
             mri = x[0, 0, :, middle_slice, :].cpu().numpy()
             manual_seg = labels[0, :, middle_slice, :].cpu().numpy()
