@@ -1,5 +1,5 @@
 project: "clementpoiret/BaggingHSF"
-name: "UNet_TEST"
+name: "ResDUNet_partial"
 mode: "offline"
 close_after_fit: False
 capture_hardware_metrics: True
