@@ -1468,7 +1468,7 @@ class SegmentationModel(pl.LightningModule):
 
         if self.scheduler:
             optimizers["lr_scheduler"] = self.scheduler(optimizer)
-            optimizers["monitor"] = "Validation SegLoss"
+            optimizers["monitor"] = "validation_loss"
 
         return optimizers
 
@@ -1571,12 +1571,18 @@ class SegmentationModel(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         loss = self.step(batch, batch_idx, step_name="Training")
 
+        self.log('train_loss',
+                 loss,
+                 on_step=True,
+                 on_epoch=True,
+                 sync_dist=True)
+
         return loss
 
     def validation_step(self, batch, batch_idx):
         loss = self.step(batch, batch_idx, step_name="Validation")
 
-        self.log("Validation SegLoss", loss)
+        self.log("validation_loss", loss, sync_dist=True)
 
         # # Specific metrics
         # y_hat = F.softmax(y_hat, dim=1)
@@ -1603,5 +1609,7 @@ class SegmentationModel(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         loss = self.step(batch, batch_idx, step_name="Test")
+
+        self.log("test_loss", loss, sync_dist=True)
 
         return loss
