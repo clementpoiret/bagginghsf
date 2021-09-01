@@ -5,7 +5,7 @@ num_nodes: 1
 plugins: "deepspeed_stage_2"
 precision: 16
 log_gpu_memory: true
-max_epochs: 32
+max_epochs: 64
 progress_bar_refresh_rate: 8
 benchmark: true
 deterministic: false
