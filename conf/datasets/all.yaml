@@ -192,14 +192,14 @@ datasets:
     ca_type: "1/2/3"
     patterns:
       t2_normal:
-        mri: "**/*t2_normal.nii.gz"
-        label: "*t2_normal_label.nii.gz"
+        mri: "**/*t2_normal.nii"
+        label: "*t2_normal_label.nii"
       t2_ad:
-        mri: "**/*t2_ad.nii.gz"
-        label: "*t2_ad_label.nii.gz"
+        mri: "**/*t2_ad.nii"
+        label: "*t2_ad_label.nii"
       t2_mci:
-        mri: "**/*t2_mci.nii.gz"
-        label: "*t2_mci_label.nii.gz"
+        mri: "**/*t2_mci.nii"
+        label: "*t2_mci_label.nii"
     labels:
       1: 2
       2: 3
@@ -237,10 +237,10 @@ datasets:
         mri: "**/*t1w_hires*hippocampus_left*.nii.gz"
         label: "*hippolabels_hres*hippocampus_left*.nii.gz"
       right_t1_standard:
-        mri: "**/*t1w_standard*hippocampus_right*.nii.gz"
+        mri: "**/*t1w_standard_defaced*hippocampus_right*.nii.gz"
         label: "*hippolabels_t1w_standard*hippocampus_right*.nii.gz"
       left_t1_standard:
-        mri: "**/*t1w_standard*hippocampus_left*.nii.gz"
+        mri: "**/*t1w_standard_defaced*hippocampus_left*.nii.gz"
         label: "*hippolabels_t1w_standard*hippocampus_left*.nii.gz"
     labels:
       1: 2
