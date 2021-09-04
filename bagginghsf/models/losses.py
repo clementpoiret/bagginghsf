@@ -499,13 +499,13 @@ def forgiving_loss(loss, input, target, ca_type, head=-1, tail=-2):
     if head > 0:
         # save where is head
         headmask = target[:, head:head + 1, :, :, :]
+        print(
+            f"HEAD: {head}, TARGET: {target.shape}, HEADMASK: {headmask.shape}")
         #exclude head from target
         _pre = target[:, :head, :, :, :]
         _post = target[:, head + 1:, :, :, :]
         target = torch.cat([_pre, _post], dim=1)
         # all positive classes are head
-        print(target.shape)
-        print(headmask.shape)
         target[:, 1:, :, :, :] += headmask
 
     if tail > 0:
