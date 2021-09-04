@@ -1488,7 +1488,7 @@ class SegmentationModel(pl.LightningModule):
             # seg_loss = self.seg_loss(y_hat, labels.long())
             seg_loss = forgiving_loss(self.seg_loss,
                                       y_hat,
-                                      labels.long(),
+                                      y,
                                       batch["ca_type"][0],
                                       head=head,
                                       tail=tail)
@@ -1506,7 +1506,7 @@ class SegmentationModel(pl.LightningModule):
             # loss = self.seg_loss(y_hat, labels.long())
             loss = forgiving_loss(self.seg_loss,
                                   y_hat,
-                                  labels.long(),
+                                  y,
                                   batch["ca_type"][0],
                                   head=head,
                                   tail=tail)

@@ -492,10 +492,29 @@ class PenaltyGDiceLoss(nn.Module):
 
 
 def forgiving_loss(loss, input, target, ca_type, head=-1, tail=-2):
-    mask = torch.where((target == head) | (target == tail),
-                       torch.tensor(0., device=input.device),
-                       torch.tensor(1., device=input.device))
-    target *= mask.long()  # when target contains HEAD and TAIL channels
+    # mask = torch.where((target == head) | (target == tail),
+    #                    torch.tensor(0., device=input.device),
+    #                    torch.tensor(1., device=input.device))
+    # target *= mask.long()  # when target contains HEAD and TAIL channels
+    if head > 0:
+        # save where is head
+        headmask = target[:, head:head + 1, :, :, :]
+        #exclude head from target
+        _pre = target[:, :head, :, :, :]
+        _post = target[:, head + 1:, :, :, :]
+        target = torch.cat([_pre, _post], dim=1)
+        # all positive classes are head
+        target[:, 1:, :, :, :] += headmask
+
+    if tail > 0:
+        # save where is tail
+        tailmask = target[:, tail:tail + 1, :, :, :]
+        #exclude tail from target
+        _pre = target[:, :tail, :, :, :]
+        _post = target[:, tail + 1:, :, :, :]
+        target = torch.cat([_pre, _post], dim=1)
+        # all positive classes are tail
+        target[:, 1:, :, :, :] += tailmask
 
     if ca_type == "1/2/3":
         # 1 DG; 2 CA1; 3 CA2; 4 CA3; 5 SUB
@@ -515,7 +534,20 @@ def forgiving_loss(loss, input, target, ca_type, head=-1, tail=-2):
 
         input_compat = torch.cat((_pre, _in, _post), dim=1)
 
+    # if head > 0:
+    #     # 1DG 2-NCA N+1HEAD;]
+
+    #     _pre = target[:, :head, :, :, :]
+    #     _post = target[:, head + 1:, :, :, :]
+    #     target = torch.cat((_pre, _post), dim=1)
+
+    # if tail > 0:
+    #     torch.where(target[:, tail, :, :, :] == 1)
+    #     target = target[:, :tail, :, :, :]
+
     # print("input_compat", input_compat.shape)
     # print("target", target.shape)
     # print("mask", mask.shape)
-    return loss(input_compat.to(input.device), target, loss_mask=mask)
+    assert input_compat.shape == target.shape, f"Can't match input of shape {input_compat.shape} with a target of shape {target.shape}"
+
+    return loss(input_compat.to(input.device), target)
