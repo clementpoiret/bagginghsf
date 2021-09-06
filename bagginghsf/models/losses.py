@@ -499,8 +499,8 @@ def forgiving_loss(loss, input, target, ca_type, head=-1, tail=-2):
     if head > 0:
         # save where is head
         headmask = target[:, head:head + 1, :, :, :]
-        print(
-            f"HEAD: {head}, TARGET: {target.shape}, HEADMASK: {headmask.shape}")
+        # print(
+        #     f"HEAD: {head}, TARGET: {target.shape}, HEADMASK: {headmask.shape}")
         #exclude head from target
         _pre = target[:, :head, :, :, :]
         _post = target[:, head + 1:, :, :, :]
