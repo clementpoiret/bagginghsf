@@ -67,6 +67,7 @@ class MRIDataModule(pl.LightningDataModule):
                       dataset,
                       specific_pipeline=None):
         # TODO: Add Contrast
+
         subject = tio.Subject(mri=tio.ScalarImage(mri),
                               label=tio.LabelMap(label),
                               labels_names=labels_names,
@@ -76,7 +77,8 @@ class MRIDataModule(pl.LightningDataModule):
         if specific_pipeline:
             subject = specific_pipeline(subject)
 
-        return subject
+        if len(subject.label.data.unique()) == len(labels_names) + 1:
+            return subject
 
     def _get_subject_list(self,
                           data_dir: str,
@@ -97,7 +99,7 @@ class MRIDataModule(pl.LightningDataModule):
             for mris, labels in zip(mris, labels)
         ]
 
-        return subjects
+        return list(filter(None, subjects))
 
     def setup(self, stage: Optional[str] = None):
         datasets = zip(self.data_dir, self.volume_pattern, self.label_pattern,
