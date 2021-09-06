@@ -505,6 +505,8 @@ def forgiving_loss(loss, input, target, ca_type, head=-1, tail=-2):
         _pre = target[:, :head, :, :, :]
         _post = target[:, head + 1:, :, :, :]
         target = torch.cat([_pre, _post], dim=1)
+        if tail > 0:
+            tail -= 1
         # all positive classes are head
         if headmask.shape[1] > 0:
             target[:, 1:, :, :, :] += headmask
