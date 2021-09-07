@@ -121,6 +121,10 @@ class MRIDataModule(pl.LightningDataModule):
 
         if self.train_val_test_idx:
             train_idx, val_idx, test_idx = self.train_val_test_idx
+
+            if self.replace:
+                train_idx = random.choices(train_idx, k=len(train_idx))
+
         else:
             train_idx, val_idx = train_test_split(idx,
                                                   self.train_ratio,
