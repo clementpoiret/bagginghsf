@@ -52,6 +52,7 @@ def load_from_config(data_cfg: DictConfig):
                    datasets=resulting_datasets,
                    specific_pipeline=specific_pipeline,
                    batch_size=data_cfg.batch_size,
+                   train_val_test_idx=data_cfg.train_val_test_idx,
                    train_ratio=data_cfg.train_ratio,
                    k_sample=data_cfg.k_sample,
                    replace=data_cfg.replace,
@@ -59,4 +60,5 @@ def load_from_config(data_cfg: DictConfig):
                    label_pattern=label_pattern,
                    labels_names=labels_names,
                    ca_type=ca_type,
-                   num_workers=data_cfg.num_workers)
+                   num_workers=data_cfg.num_workers,
+                   pin_memory=data_cfg.pin_memory)

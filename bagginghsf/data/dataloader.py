@@ -31,17 +31,20 @@ class MRIDataModule(pl.LightningDataModule):
                  specific_pipeline,
                  labels_names: list,
                  batch_size: int = 8,
+                 train_val_test_idx: Optional[list] = None,
                  train_ratio: float = .8,
                  k_sample: Optional[int] = None,
                  replace: bool = False,
                  volume_pattern: list = ["**/tse*right*.nii.gz"],
                  label_pattern: list = ["seg*hippocampus_right*.nii.gz"],
                  ca_type: list = ["1/2/3"],
-                 num_workers: int = 4):
+                 num_workers: int = 4,
+                 pin_memory: bool = True):
         super().__init__()
         self.data_dir = data_dir
         self.datasets = datasets
         self.batch_size = batch_size
+        self.train_val_test_idx = train_val_test_idx
         self.train_ratio = train_ratio
         self.k_sample = k_sample
         self.replace = replace
@@ -54,6 +57,7 @@ class MRIDataModule(pl.LightningDataModule):
         self.ca_type = ca_type
         self.labels_names = labels_names
         self.num_workers = num_workers
+        self.pin_memory = pin_memory
 
         assert len(data_dir) == len(volume_pattern) == len(
             label_pattern) == len(ca_type) == len(specific_pipeline) == len(
@@ -115,15 +119,18 @@ class MRIDataModule(pl.LightningDataModule):
 
         idx = list(range(len(subjects_list)))
 
-        train_idx, val_idx = train_test_split(idx,
-                                              self.train_ratio,
-                                              replace=self.replace,
-                                              k_sample=self.k_sample)
+        if self.train_val_test_idx:
+            train_idx, val_idx, test_idx = self.train_val_test_idx
+        else:
+            train_idx, val_idx = train_test_split(idx,
+                                                  self.train_ratio,
+                                                  replace=self.replace,
+                                                  k_sample=self.k_sample)
+            test_idx = val_idx  # ! WARNING: ONLY FOR TESTING
 
         self.subjects_train_list = [subjects_list[i] for i in train_idx]
         self.subjects_val_list = [subjects_list[i] for i in val_idx]
-        # ! WARNING: ONLY FOR TESTING
-        self.subjects_test_list = [subjects_list[i] for i in val_idx]
+        self.subjects_test_list = [subjects_list[i] for i in test_idx]
 
     def train_dataloader(self):
         transforms = [self.preprocessing_pipeline, self.augmentation_pipeline]
@@ -137,7 +144,8 @@ class MRIDataModule(pl.LightningDataModule):
         return DataLoader(train_dataset,
                           batch_size=self.batch_size,
                           num_workers=self.num_workers,
-                          shuffle=True)
+                          shuffle=True,
+                          pin_memory=self.pin_memory)
 
     def val_dataloader(self):
         transforms = [self.preprocessing_pipeline]
@@ -150,7 +158,8 @@ class MRIDataModule(pl.LightningDataModule):
 
         return DataLoader(val_dataset,
                           batch_size=self.batch_size,
-                          num_workers=self.num_workers)
+                          num_workers=self.num_workers,
+                          pin_memory=self.pin_memory)
 
     def test_dataloader(self):
         transforms = [self.preprocessing_pipeline]
@@ -163,7 +172,8 @@ class MRIDataModule(pl.LightningDataModule):
 
         return DataLoader(test_dataset,
                           batch_size=self.batch_size,
-                          num_workers=self.num_workers)
+                          num_workers=self.num_workers,
+                          pin_memory=self.pin_memory)
 
 
 def test(path):
