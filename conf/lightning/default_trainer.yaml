@@ -2,7 +2,7 @@ default_root_dir: "/home/cp264607/Sync/Projects/Python/BaggingHSF/"
 gpus: -1
 num_nodes: 1
 # accelerator: "ddp"
-plugins: "deepspeed_stage_2"
+plugins: "ddp_sharded"
 precision: 16
 log_gpu_memory: true
 max_epochs: 64
