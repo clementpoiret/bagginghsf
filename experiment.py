@@ -36,8 +36,8 @@ def main(cfg: DictConfig) -> None:
             tio.EnsureShapeMultiple(8),
         ]),
         augmentation_pipeline=tio.Compose([
-            tio.RandomAffine(scales=.1, degrees=5, translation=3, p=.1),
-            # tio.RandomAnisotropy(p=.1),
+            tio.RandomAffine(scales=.2, degrees=10, translation=3, p=.1),
+            tio.RandomAnisotropy(p=.1, scalars_only=False),
             tio.transforms.RandomElasticDeformation(num_control_points=4,
                                                     max_displacement=3,
                                                     locked_borders=0,
@@ -79,15 +79,17 @@ def main(cfg: DictConfig) -> None:
                               learning_rate=learning_rate,
                               is_capsnet=is_capsnet)
 
-    print("cwd:", os.getcwd())
+    # print("cwd:", os.getcwd())
     trainer = pl.Trainer(logger=logger, **cfg.lightning)
+
+    # print("NUMBER OF GPUs:", torch.cuda.device_count())
 
     trainer.fit(model, datamodule=mri_datamodule)
 
     # torch.save(model.state_dict(), "unet_test.pt")
-    trainer.save_checkpoint("resdunet_partial.ckpt")
+    trainer.save_checkpoint("resdunet_v0.ckpt")
     logger.experiment['model_checkpoints/resdunet_partial'].upload(
-        'resdunet_partial.ckpt')
+        'resdunet_v0.ckpt')
     # logger.experiment.log_model("poc", "unet_test.pt")
 
     trainer.test(model, datamodule=mri_datamodule)
