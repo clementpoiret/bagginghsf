@@ -37,7 +37,7 @@ def main(cfg: DictConfig) -> None:
         ]),
         augmentation_pipeline=tio.Compose([
             tio.RandomAffine(scales=.2, degrees=10, translation=3, p=.1),
-            tio.RandomAnisotropy(p=.1, scalars_only=False),
+            # tio.RandomAnisotropy(p=.1, scalars_only=False),
             tio.transforms.RandomElasticDeformation(num_control_points=4,
                                                     max_displacement=3,
                                                     locked_borders=0,
