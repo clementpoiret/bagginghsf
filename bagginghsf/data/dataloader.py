@@ -64,7 +64,7 @@ class MRIDataModule(pl.LightningDataModule):
                 labels_names)
 
         # Fix for deepspeed
-        self.setup()
+        # self.setup()
 
     def _load_subject(self,
                       mri,
