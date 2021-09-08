@@ -63,6 +63,9 @@ class MRIDataModule(pl.LightningDataModule):
             label_pattern) == len(ca_type) == len(specific_pipeline) == len(
                 labels_names)
 
+        # Fix for deepspeed
+        self.setup()
+
     def _load_subject(self,
                       mri,
                       label,
