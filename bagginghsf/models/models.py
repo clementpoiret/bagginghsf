@@ -1575,14 +1575,15 @@ class SegmentationModel(pl.LightningModule):
                  loss,
                  on_step=True,
                  on_epoch=True,
-                 sync_dist=True)
+                 sync_dist=True,
+                 rank_zero_only=True)
 
         return loss
 
     def validation_step(self, batch, batch_idx):
         loss = self.step(batch, batch_idx, step_name="Validation")
 
-        self.log("validation_loss", loss, sync_dist=True)
+        self.log("validation_loss", loss, sync_dist=True, rank_zero_only=True)
 
         # # Specific metrics
         # y_hat = F.softmax(y_hat, dim=1)
@@ -1610,6 +1611,6 @@ class SegmentationModel(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         loss = self.step(batch, batch_idx, step_name="Test")
 
-        self.log("test_loss", loss, sync_dist=True)
+        self.log("test_loss", loss, sync_dist=True, rank_zero_only=True)
 
         return loss
