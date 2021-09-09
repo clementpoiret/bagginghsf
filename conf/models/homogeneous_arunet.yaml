@@ -1,0 +1,14 @@
+n: 1
+n_models: 5
+
+models:
+  ARUNet3D:
+    is_capsnet: False
+    hparams:
+      modeltype: "ResidualUNet3D"
+      in_channels: 1
+      out_channels: 6
+      f_maps: 64
+      num_levels: 4
+      layer_order: "crs"
+      use_attention: True
