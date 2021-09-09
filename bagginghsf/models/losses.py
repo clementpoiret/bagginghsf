@@ -523,8 +523,8 @@ def forgiving_loss(loss, input, target, ca_type, head=-1, tail=-2):
         target = torch.cat([_pre, _post], dim=1)
         # all positive classes are tail
         if tailmask.shape[1] > 0:
-            #DG+CA(CA1)
-            target[:, 1:3, :, :, :] += tailmask
+            #CA(CA1)
+            target[:, 2:5, :, :, :] += tailmask
             #Sub
             target[:, -1:, :, :, :] += tailmask
 

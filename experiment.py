@@ -87,12 +87,11 @@ def main(cfg: DictConfig) -> None:
     trainer.fit(model, datamodule=mri_datamodule)
 
     # torch.save(model.state_dict(), "unet_test.pt")
-    trainer.save_checkpoint("arunet_v0.ckpt")
-    logger.experiment['model_checkpoints/arunet'].upload(
-        'arunet_v0.ckpt')
+    trainer.save_checkpoint("arunet_v0b.ckpt")
+    logger.experiment['model_checkpoints/arunet_b'].upload('arunet_v0b.ckpt')
     # logger.experiment.log_model("poc", "unet_test.pt")
 
-    trainer.test(model, datamodule=mri_datamodule)
+    # trainer.test(model, datamodule=mri_datamodule)
     logger.experiment.stop()
 
 
