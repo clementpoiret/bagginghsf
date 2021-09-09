@@ -524,7 +524,7 @@ def forgiving_loss(loss, input, target, ca_type, head=-1, tail=-2):
         # all positive classes are tail
         if tailmask.shape[1] > 0:
             #CA(CA1)
-            target[:, 2:5, :, :, :] += tailmask
+            target[:, 2:3, :, :, :] += tailmask
             #Sub
             target[:, -1:, :, :, :] += tailmask
 
