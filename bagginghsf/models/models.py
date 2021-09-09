@@ -76,6 +76,9 @@ class Abstract3DUNet(nn.Module):
                  dilated_conv_kernel_size=3,
                  out_channels_dilated_conv=32,
                  dunet_mode='last',
+                 use_attention=False,
+                 normalization="s",
+                 using_bn=False,
                  **kwargs):
         super(Abstract3DUNet, self).__init__()
 
@@ -169,7 +172,10 @@ class Abstract3DUNet(nn.Module):
                 dunet_n_blocks=n_blocks,
                 dunet_num_groups=dunet_num_groups,
                 dilated_conv_kernel_size=dilated_conv_kernel_size,
-                out_channels_dilated_conv=out_channels_dilated_conv)
+                out_channels_dilated_conv=out_channels_dilated_conv,
+                use_attention=use_attention,
+                normalization=normalization,
+                using_bn=using_bn)
             decoders.append(decoder)
 
         self.decoders = nn.ModuleList(decoders)

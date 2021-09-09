@@ -553,9 +553,13 @@ class Decoder(nn.Module):
                  use_dunet=False,
                  dunet_conv_layer_order='cr',
                  dunet_n_blocks=6,
-                 dunet_num_groups=8):
+                 dunet_num_groups=8,
+                 use_attention=False,
+                 normalization="s",
+                 using_bn=False):
         super(Decoder, self).__init__()
         self.use_dunet = use_dunet
+        self.use_attention = use_attention
 
         if basic_module == DoubleConv:
             # if DoubleConv is the basic_module use interpolation for
@@ -599,13 +603,25 @@ class Decoder(nn.Module):
                 n_blocks=dunet_n_blocks,
                 num_groups=dunet_num_groups)
 
+        if use_attention:
+            self.attention = AttentionConvBlock(F_g=out_channels,
+                                                F_l=out_channels,
+                                                F_int=out_channels // 2,
+                                                F_out=1,
+                                                normalization=normalization,
+                                                using_bn=using_bn)
+
     def forward(self, encoder_features, x):
         x = self.upsampling(encoder_features=encoder_features, x=x)
+
         if self.use_dunet:
             encoder_features = self.dilated_dense_network(encoder_features)
-            x = self.joining(encoder_features, x)
-        else:
-            x = self.joining(encoder_features, x)
+
+        if self.use_attention:
+            encoder_features = self.attention(g=x, x=encoder_features)
+
+        x = self.joining(encoder_features, x)
+
         x = self.basic_module(x)
 
         return x
@@ -876,6 +892,85 @@ class DecoderCaps(nn.Module):
         x = self.caps(x)
 
         return x
+
+
+class AttentionConvBlock(nn.Module):
+    """
+    3D Conv Attention Block w/ optional Normalization.
+    For normalization, it supports:
+    - `b` for `BatchNorm3d`,
+    - `s` for `SwitchNorm3d`.
+    
+    `using_bn` controls SwitchNorm's behavior. It has no effect is
+    `normalization == "b"`.
+
+    SwitchNorm3d comes from:
+    <https://github.com/switchablenorms/Switchable-Normalization>
+    """
+
+    def __init__(self,
+                 F_g,
+                 F_l,
+                 F_int,
+                 F_out=1,
+                 normalization=None,
+                 using_bn=False):
+        super(AttentionConvBlock, self).__init__()
+
+        W_g = [
+            nn.Conv3d(
+                F_g,
+                F_int,
+                kernel_size=1,
+                stride=1,
+                padding=0,
+                bias=True,
+            )
+        ]
+        W_x = [
+            nn.Conv3d(
+                F_l,
+                F_int,
+                kernel_size=1,
+                stride=1,
+                padding=0,
+                bias=True,
+            )
+        ]
+        psi = [
+            nn.Conv3d(
+                F_int,
+                F_out,
+                kernel_size=1,
+                stride=1,
+                padding=0,
+                bias=True,
+            )
+        ]
+        if normalization == "b":
+            W_g.append(nn.BatchNorm3d(F_int))
+            W_x.append(nn.BatchNorm3d(F_int))
+            psi.append(nn.BatchNorm3d(F_out))
+        elif normalization == "s":
+            W_g.append(SwitchNorm3d(F_int, using_bn=using_bn))
+            W_x.append(SwitchNorm3d(F_int, using_bn=using_bn))
+            psi.append(SwitchNorm3d(F_out, using_bn=using_bn))
+
+        self.W_g = nn.Sequential(*W_g)
+        self.W_x = nn.Sequential(*W_x)
+
+        psi.append(nn.Sigmoid())
+        self.psi = nn.Sequential(*psi)
+
+        self.relu = nn.ReLU(inplace=True)
+
+    def forward(self, x, g):
+        g1 = self.W_g(g)
+        x1 = self.W_x(x)
+        psi = self.relu(g1 + x1)
+        psi = self.psi(psi)
+
+        return x * psi
 
 
 class AttentionBlock(nn.Module):
