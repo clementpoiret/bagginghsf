@@ -15,4 +15,4 @@ models:
       dunet_n_blocks: 6
       dilated_conv_kernel_size: 3
       out_channels_dilated_conv: 32
-      dunet_mode": 1
+      dunet_mode: 1
