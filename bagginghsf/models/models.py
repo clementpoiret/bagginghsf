@@ -1500,13 +1500,12 @@ class SegmentationModel(pl.LightningModule):
                                       tail=tail)
             loss = seg_loss + self.hp['α'] * rec_loss
             # self.log(f"{step_name} Segmentation Loss", seg_loss)
-            # self.logger.experiment.log_metric(f"{step_name} Segmentation Loss",
-            #                                   seg_loss)
-            self.logger.experiment[f"{step_name}/focalTversky"].log(seg_loss)
+            self.logger.experiment.log_metric(f"{step_name} Focal Tversky",
+                                              seg_loss)
+            # self.logger.experiment[f"{step_name}/focalTversky"].log(seg_loss)
             # self.log(f"{step_name} Reconstruction Loss", rec_loss)
-            # self.logger.experiment.log_metric(
-            #     f"{step_name} Reconstruction Loss", rec_loss)
-            self.logger.experiment[f"{step_name}/valMse"].log(rec_loss)
+            self.logger.experiment.log_metric(f"{step_name} MSE", rec_loss)
+            # self.logger.experiment[f"{step_name}/valMse"].log(rec_loss)
         else:
             y_hat = self.forward(x.float())
             # loss = self.seg_loss(y_hat, labels.long())
@@ -1517,12 +1516,12 @@ class SegmentationModel(pl.LightningModule):
                                   head=head,
                                   tail=tail)
             # self.log(f"{step_name} Segmentation Loss", loss)
-            # self.logger.experiment.log_metric(f"{step_name} Segmentation Loss",
-            #                                   loss)
-            self.logger.experiment[f"{step_name}/focalTversky"].log(loss)
+            self.logger.experiment.log_metric(f"{step_name} Focal Tversky",
+                                              loss)
+            # self.logger.experiment[f"{step_name}/focalTversky"].log(loss)
 
-        # if (batch_idx == 0) and step_name == "Training":
-        #     self.logger.experiment.set_model_graph(self._model, overwrite=True)
+        if (batch_idx == 0) and step_name == "Training":
+            self.logger.experiment.set_model_graph(self._model, overwrite=True)
 
         if (batch_idx < 5) and (step_name == "Test"):
             middle_slice = x.shape[-2] // 2
@@ -1531,19 +1530,19 @@ class SegmentationModel(pl.LightningModule):
             _, output_seg = y_hat.max(dim=1)
             output_seg = output_seg[0, :, middle_slice, :].cpu().numpy()
 
-            # self.logger.experiment.log_image(mri, name=f"MRI: {batch_idx}")
-            self.logger.experiment[f"{step_name}/{batch_idx}/MRI"].log(
-                File.as_image(mri))
-            # self.logger.experiment.log_image(
-            #     manual_seg, name=f"Manual Segmentation: {batch_idx}")
-            self.logger.experiment[
-                f"{step_name}/{batch_idx}/manualSegmentation"].log(
-                    File.as_image(manual_seg))
-            # self.logger.experiment.log_image(
-            #     output_seg, name=f"Predicted Segmentation: {batch_idx}")
-            self.logger.experiment[
-                f"{step_name}/{batch_idx}/predictedSegmentation"].log(
-                    File.as_image(output_seg))
+            self.logger.experiment.log_image(mri, name=f"MRI: {batch_idx}")
+            # self.logger.experiment[f"{step_name}/{batch_idx}/MRI"].log(
+            #     File.as_image(mri))
+            self.logger.experiment.log_image(
+                manual_seg, name=f"Manual Segmentation: {batch_idx}")
+            # self.logger.experiment[
+            #     f"{step_name}/{batch_idx}/manualSegmentation"].log(
+            #         File.as_image(manual_seg))
+            self.logger.experiment.log_image(
+                output_seg, name=f"Predicted Segmentation: {batch_idx}")
+            # self.logger.experiment[
+            #     f"{step_name}/{batch_idx}/predictedSegmentation"].log(
+            #         File.as_image(output_seg))
 
         # if (step_name == "Validation") and (self.current_epoch > 0):
         #     names = {k: v[0] for k, v in batch["labels_names"].items()}

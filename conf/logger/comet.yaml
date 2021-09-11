@@ -1,7 +1,7 @@
 workspace: "clementpoiret"
 save_dir: "./.comet_ml"
 project_name: "bagginghsf"
-experiment_name: "UNetPoC_DS2"
+experiment_name: "ARUnet_v0"
 log_code: False
 log_graph: True
 auto_output_logging: "simple"

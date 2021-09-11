@@ -1,5 +1,5 @@
 # Comet must come first
-# from comet_ml import Experiment
+from comet_ml import Experiment
 
 # Import all other modules
 import os
@@ -11,7 +11,8 @@ import torch
 import torchio as tio
 # from hydra import compose, initialize
 from omegaconf import DictConfig
-from neptune.new.integrations.pytorch_lightning import NeptuneLogger
+# from neptune.new.integrations.pytorch_lightning import NeptuneLogger
+from pytorch_lightning.loggers import CometLogger
 from torch import nn, optim
 
 from bagginghsf.data.loader import load_from_config
@@ -26,7 +27,7 @@ from bagginghsf.models.models import SegmentationModel
 @hydra.main(config_path="conf", config_name="config")
 def main(cfg: DictConfig) -> None:
     # Logger
-    logger = NeptuneLogger(**cfg.logger)
+    logger = CometLogger(**cfg.logger)
 
     # Load and setup data
     mri_datamodule = load_from_config(cfg.datasets)(
@@ -87,12 +88,12 @@ def main(cfg: DictConfig) -> None:
     trainer.fit(model, datamodule=mri_datamodule)
 
     # torch.save(model.state_dict(), "unet_test.pt")
-    trainer.save_checkpoint("arunet_v0c.ckpt")
-    logger.experiment['model_checkpoints/arunet_c'].upload('arunet_v0c.ckpt')
-    # logger.experiment.log_model("poc", "unet_test.pt")
+    trainer.save_checkpoint("arunet_v0.ckpt")
+    # logger.experiment['model_checkpoints/arunet_c'].upload('arunet_v0c.ckpt')
+    logger.experiment.log_model("arunet_v0", "arunet_v0.ckpt")
 
     # trainer.test(model, datamodule=mri_datamodule)
-    logger.experiment.stop()
+    # logger.experiment.stop()
 
 
 if __name__ == "__main__":
