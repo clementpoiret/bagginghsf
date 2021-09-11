@@ -5,7 +5,7 @@ accelerator: "ddp"
 # plugins: "deepspeed_stage_2"
 precision: 16
 log_gpu_memory: true
-max_epochs: 128
+max_epochs: 256
 progress_bar_refresh_rate: 8
 benchmark: true
 deterministic: false
