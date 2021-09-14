@@ -26,71 +26,74 @@ from bagginghsf.models.models import SegmentationModel
 
 @hydra.main(config_path="conf", config_name="config")
 def main(cfg: DictConfig) -> None:
-    # Logger
-    logger = CometLogger(**cfg.logger)
+    # For multiple bags
+    for i in range(cfg.models.n_models):
+        # Logger
+        logger = CometLogger(**cfg.logger)
 
-    # Load and setup data
-    mri_datamodule = load_from_config(cfg.datasets)(
-        preprocessing_pipeline=tio.Compose([
-            tio.ToCanonical(),
-            tio.ZNormalization(),
-            tio.EnsureShapeMultiple(8),
-        ]),
-        augmentation_pipeline=tio.Compose([
-            tio.RandomAffine(scales=.2, degrees=10, translation=3, p=.1),
-            # tio.RandomAnisotropy(p=.1, scalars_only=False),
-            tio.transforms.RandomElasticDeformation(num_control_points=4,
-                                                    max_displacement=3,
-                                                    locked_borders=0,
-                                                    p=.05),
-            tio.RandomFlip(axes=('LR',), flip_probability=.2),
-            # tio.RandomMotion(degrees=5, translation=5, num_transforms=2, p=.01),
-            # tio.RandomSpike(p=.01),
-            # tio.RandomBiasField(coefficients=.2, p=.01),
-            tio.RandomBlur(std=(0, 0.1), p=.01),
-            tio.RandomNoise(mean=0, std=0.1, p=.1),
-            tio.RandomGamma(log_gamma=0.1, p=.1),
-        ]),
-        postprocessing_pipeline=tio.Compose([tio.OneHot()]))
-    # mri_datamodule.setup()
+        # Load and setup data
+        mri_datamodule = load_from_config(cfg.datasets)(
+            preprocessing_pipeline=tio.Compose([
+                tio.ToCanonical(),
+                tio.ZNormalization(),
+                tio.EnsureShapeMultiple(8),
+            ]),
+            augmentation_pipeline=tio.Compose([
+                tio.RandomAffine(scales=.2, degrees=10, translation=3, p=.1),
+                # tio.RandomAnisotropy(p=.1, scalars_only=False),
+                tio.transforms.RandomElasticDeformation(num_control_points=4,
+                                                        max_displacement=3,
+                                                        locked_borders=0,
+                                                        p=.05),
+                tio.RandomFlip(axes=('LR',), flip_probability=.2),
+                # tio.RandomMotion(degrees=5, translation=5, num_transforms=2, p=.01),
+                # tio.RandomSpike(p=.01),
+                # tio.RandomBiasField(coefficients=.2, p=.01),
+                tio.RandomBlur(std=(0, 0.1), p=.01),
+                tio.RandomNoise(mean=0, std=0.1, p=.1),
+                tio.RandomGamma(log_gamma=0.1, p=.1),
+            ]),
+            postprocessing_pipeline=tio.Compose([tio.OneHot()]))
+        # mri_datamodule.setup()
 
-    # batch = next(iter(mri_datamodule.train_dataloader()))
-    # batch["label"]["data"].shape
+        # batch = next(iter(mri_datamodule.train_dataloader()))
+        # batch["label"]["data"].shape
 
-    # Training parameters
-    seg_loss = FocalTversky_loss({"apply_nonlin": None})
-    optimizer = optim.AdamW
-    scheduler = partial(optim.lr_scheduler.CosineAnnealingLR,
-                        T_max=cfg.lightning.max_epochs)
-    learning_rate = 1e-4
-    # classes_names = None
+        # Training parameters
+        seg_loss = FocalTversky_loss({"apply_nonlin": None})
+        optimizer = optim.AdamW
+        scheduler = partial(optim.lr_scheduler.CosineAnnealingLR,
+                            T_max=cfg.lightning.max_epochs)
+        learning_rate = 1e-4
+        # classes_names = None
 
-    # Load and setup model
-    if cfg.models.n == 1:
-        model_name = list(cfg.models.models.keys())[0]
-        hparams = cfg.models.models[model_name].hparams
-        is_capsnet = cfg.models.models[model_name].is_capsnet
-    else:
-        raise NotImplementedError
+        # Load and setup model
+        if cfg.models.n == 1:
+            model_name = list(cfg.models.models.keys())[0]
+            hparams = cfg.models.models[model_name].hparams
+            is_capsnet = cfg.models.models[model_name].is_capsnet
+        else:
+            raise NotImplementedError
 
-    model = SegmentationModel(hparams=hparams,
-                              seg_loss=seg_loss,
-                              optimizer=optimizer,
-                              scheduler=scheduler,
-                              learning_rate=learning_rate,
-                              is_capsnet=is_capsnet)
+        model = SegmentationModel(hparams=hparams,
+                                  seg_loss=seg_loss,
+                                  optimizer=optimizer,
+                                  scheduler=scheduler,
+                                  learning_rate=learning_rate,
+                                  is_capsnet=is_capsnet)
 
-    # print("cwd:", os.getcwd())
-    trainer = pl.Trainer(logger=logger, **cfg.lightning)
+        # print("cwd:", os.getcwd())
+        trainer = pl.Trainer(logger=logger, **cfg.lightning)
 
-    # print("NUMBER OF GPUs:", torch.cuda.device_count())
+        # print("NUMBER OF GPUs:", torch.cuda.device_count())
 
-    trainer.fit(model, datamodule=mri_datamodule)
+        trainer.fit(model, datamodule=mri_datamodule)
 
-    # torch.save(model.state_dict(), "unet_test.pt")
-    trainer.save_checkpoint("arunet_v0.ckpt")
-    # logger.experiment['model_checkpoints/arunet_c'].upload('arunet_v0c.ckpt')
-    logger.experiment.log_model("arunet_v0", "arunet_v0.ckpt")
+        # torch.save(model.state_dict(), "unet_test.pt")
+        trainer.save_checkpoint(f"arunet_v0_bag{i}.ckpt")
+        # logger.experiment['model_checkpoints/arunet_c'].upload('arunet_v0c.ckpt')
+        logger.experiment.log_model(f"arunet_v0_bag{i}",
+                                    f"arunet_v0_bag{i}.ckpt")
 
     # trainer.test(model, datamodule=mri_datamodule)
     # logger.experiment.stop()
