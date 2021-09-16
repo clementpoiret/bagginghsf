@@ -17,6 +17,9 @@ def train_test_split(idx, train_ratio=.8, replace=False, k_sample=None):
         k_sample = k_sample if k_sample else len(train_idx)
         train_idx = random.choices(train_idx, k=k_sample)
 
+        if train_ratio == 1:
+            test_idx = [i for i in idx if i not in train_idx]
+
     return train_idx, test_idx
 
 
