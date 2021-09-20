@@ -1578,7 +1578,7 @@ class SegmentationModel(pl.LightningModule):
 
         self.log('train_loss',
                  loss,
-                 on_step=True,
+                 on_step=False,
                  on_epoch=True,
                  sync_dist=True)
 
