@@ -9,4 +9,4 @@ auto_histogram_weight_logging: True
 auto_histogram_gradient_logging: True
 auto_histogram_activation_logging: True
 auto_log_co2: True
-offline: False
+offline: True
