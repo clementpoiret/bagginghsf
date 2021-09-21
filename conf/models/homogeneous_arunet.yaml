@@ -1,5 +1,5 @@
 n: 1
-n_models: 5
+n_models: 1
 
 models:
   ARUNet3D:
