@@ -1,12 +1,12 @@
 workspace: "clementpoiret"
 save_dir: "./.comet_ml"
 project_name: "bagginghsf"
-experiment_name: "ARUnet_v0"
+experiment_name: "ARUnet_v1"
 log_code: False
 log_graph: True
 auto_output_logging: "simple"
-auto_histogram_weight_logging: True
-auto_histogram_gradient_logging: True
-auto_histogram_activation_logging: True
-auto_log_co2: True
+auto_histogram_weight_logging: False
+auto_histogram_gradient_logging: False
+auto_histogram_activation_logging: False
+auto_log_co2: False
 offline: True
