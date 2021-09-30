@@ -14,11 +14,11 @@ datasets:
     ca_type: "1/2/3"
     patterns:
       right_t2:
-        mri: "**/*T2_bet_hippocampus_right*.nii.gz"
-        label: "*full*hippocampus_right*.nii.gz"
+        mri: "**/*T2_bet_right_crop.nii.gz"
+        label: "*t2_seg_right_crop.nii.gz"
       left_t2:
-        mri: "**/*T2_bet_hippocampus_left*.nii.gz"
-        label: "*full*hippocampus_left*.nii.gz"
+        mri: "**/*T2_bet_left_crop.nii.gz"
+        label: "*t2_seg_left_crop.nii.gz"
     labels:
       1: 2
       2: 3
