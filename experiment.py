@@ -36,7 +36,6 @@ def main(cfg: DictConfig) -> None:
             preprocessing_pipeline=tio.Compose([
                 tio.ToCanonical(),
                 tio.ZNormalization(),
-                tio.EnsureShapeMultiple(8),
             ]),
             augmentation_pipeline=tio.Compose([
                 tio.RandomFlip(axes=('LR',), p=.5),
@@ -51,7 +50,7 @@ def main(cfg: DictConfig) -> None:
                                  degrees=15,
                                  translation=3,
                                  isotropic=False,
-                                 p=.1),
+                                 p=.2),
                 # tio.RandomAnisotropy(p=.1, scalars_only=False),
                 tio.transforms.RandomElasticDeformation(num_control_points=5,
                                                         max_displacement=4,
@@ -60,7 +59,9 @@ def main(cfg: DictConfig) -> None:
                 # tio.RandomSpike(p=.01),
                 # tio.RandomBiasField(coefficients=.2, p=.01),
             ]),
-            postprocessing_pipeline=tio.Compose([tio.OneHot()]))
+            postprocessing_pipeline=tio.Compose(
+                [tio.EnsureShapeMultiple(8),
+                 tio.OneHot()]))
         # mri_datamodule.setup()
 
         # batch = next(iter(mri_datamodule.train_dataloader()))
