@@ -46,7 +46,7 @@ def main(cfg: DictConfig) -> None:
                 tio.RandomBlur(std=(0, 0.5), p=.05),
                 tio.RandomNoise(mean=0, std=0.5, p=.1),
                 tio.RandomGamma(log_gamma=0.4, p=.1),
-                tio.RandomAffine(scales=.2,
+                tio.RandomAffine(scales=.3,
                                  degrees=15,
                                  translation=3,
                                  isotropic=False,
