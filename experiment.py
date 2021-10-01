@@ -22,6 +22,7 @@ from bagginghsf.models.models import SegmentationModel
 # initialize(config_path="conf")
 # cfg = compose(config_name="config")
 # print(OmegaConf.to_yaml(cfg))
+VER = "1.1.0"
 
 
 @hydra.main(config_path="conf", config_name="config")
@@ -98,10 +99,34 @@ def main(cfg: DictConfig) -> None:
         trainer.fit(model, datamodule=mri_datamodule)
 
         # torch.save(model.state_dict(), "unet_test.pt")
-        trainer.save_checkpoint(f"arunet_v1_bag{i}.ckpt")
+        trainer.save_checkpoint(f"arunet_{VER}_bag{i}.ckpt")
         # logger.experiment['model_checkpoints/arunet_c'].upload('arunet_v0c.ckpt')
-        logger.experiment.log_model(f"arunet_v1_bag{i}",
-                                    f"arunet_v1_bag{i}.ckpt")
+        logger.experiment.log_model(f"arunet_{VER}_bag{i}_ckpt",
+                                    f"arunet_{VER}_bag{i}.ckpt")
+
+        dummy_input = torch.randn(1, 1, 16, 16, 16)
+        model.eval()
+        torch.onnx.export(model,
+                          dummy_input,
+                          f'arunet_{VER}_bag{i}.onnx',
+                          input_names=['input'],
+                          output_names=['output'],
+                          dynamic_axes={
+                              'input': {
+                                  0: 'batch',
+                                  2: "x",
+                                  3: "y",
+                                  4: "z"
+                              },
+                              'output': {
+                                  0: 'batch',
+                                  2: "x",
+                                  3: "y",
+                                  4: "z"
+                              }
+                          })
+        logger.experiment.log_model(f"arunet_{VER}_bag{i}_onnx",
+                                    f"arunet_{VER}_bag{i}.onnx")
 
     # trainer.test(model, datamodule=mri_datamodule)
     # logger.experiment.stop()
