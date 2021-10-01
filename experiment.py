@@ -12,6 +12,7 @@ import torchio as tio
 # from hydra import compose, initialize
 from omegaconf import DictConfig
 # from neptune.new.integrations.pytorch_lightning import NeptuneLogger
+from pytorch_lightning.callbacks import QuantizationAwareTraining
 from pytorch_lightning.loggers import CometLogger
 from torch import nn, optim
 
@@ -92,7 +93,9 @@ def main(cfg: DictConfig) -> None:
                                   is_capsnet=is_capsnet)
 
         # print("cwd:", os.getcwd())
-        trainer = pl.Trainer(logger=logger, **cfg.lightning)
+        trainer = pl.Trainer(logger=logger,
+                             callbacks=[QuantizationAwareTraining()],
+                             **cfg.lightning)
 
         # print("NUMBER OF GPUs:", torch.cuda.device_count())
 
@@ -127,6 +130,27 @@ def main(cfg: DictConfig) -> None:
                           })
         logger.experiment.log_model(f"arunet_{VER}_bag{i}_onnx",
                                     f"arunet_{VER}_bag{i}.onnx")
+        torch.onnx.export(model.quant,
+                          dummy_input,
+                          f'arunet_{VER}_bag{i}_quant.onnx',
+                          input_names=['input'],
+                          output_names=['output'],
+                          dynamic_axes={
+                              'input': {
+                                  0: 'batch',
+                                  2: "x",
+                                  3: "y",
+                                  4: "z"
+                              },
+                              'output': {
+                                  0: 'batch',
+                                  2: "x",
+                                  3: "y",
+                                  4: "z"
+                              }
+                          })
+        logger.experiment.log_model(f"arunet_{VER}_bag{i}_quant_onnx",
+                                    f"arunet_{VER}_bag{i}_quant.onnx")
 
     # trainer.test(model, datamodule=mri_datamodule)
     # logger.experiment.stop()
