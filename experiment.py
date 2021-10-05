@@ -125,7 +125,8 @@ def main(cfg: DictConfig) -> None:
                                   3: "y",
                                   4: "z"
                               }
-                          })
+                          },
+                          opset_version=13)
         logger.experiment.log_model(f"arunet_{VER}_bag{i}_onnx",
                                     f"arunet_{VER}_bag{i}.onnx")
         # torch.onnx.export(model.quant,
