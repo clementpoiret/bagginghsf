@@ -527,6 +527,8 @@ def forgiving_loss(loss, input, target, ca_type, head=-1, tail=-2):
             target[:, 2:3, :, :, :] += tailmask
             #DG
             target[:, 1:2, :, :, :] += tailmask
+            #SUB
+            target[:, -1:, :, :, :] += tailmask
 
     if ca_type == "1/2/3":
         # 1 DG; 2 CA1; 3 CA2; 4 CA3; 5 SUB
