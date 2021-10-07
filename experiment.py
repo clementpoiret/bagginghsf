@@ -111,6 +111,7 @@ def main(cfg: DictConfig) -> None:
                                  ModelPruning(
                                      "l1_unstructured",
                                      amount=compute_amount,
+                                     make_pruning_permanent=True,
                                      use_lottery_ticket_hypothesis=True)
                              ],
                              **cfg.lightning)
