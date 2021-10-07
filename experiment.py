@@ -14,7 +14,6 @@ from omegaconf import DictConfig
 # from neptune.new.integrations.pytorch_lightning import NeptuneLogger
 # from pytorch_lightning.callbacks import QuantizationAwareTraining
 from pytorch_lightning.callbacks import ModelPruning
-from pl_bolts.callbacks import SparseMLCallback
 from pytorch_lightning.loggers import CometLogger
 from torch import nn, optim
 
@@ -26,6 +25,18 @@ from bagginghsf.models.models import SegmentationModel
 # cfg = compose(config_name="config")
 # print(OmegaConf.to_yaml(cfg))
 VER = "1.1.0"
+
+
+def compute_amount(epoch):
+    # the sum of all returned values need to be smaller than 1
+    if epoch == 10:
+        return 0.5
+
+    elif epoch == 50:
+        return 0.25
+
+    elif 75 < epoch < 99:
+        return 0.01
 
 
 @hydra.main(config_path="conf", config_name="config")
@@ -96,7 +107,12 @@ def main(cfg: DictConfig) -> None:
 
         # print("cwd:", os.getcwd())
         trainer = pl.Trainer(logger=logger,
-                             callbacks=[SparseMLCallback("recal.config.yaml")],
+                             callbacks=[
+                                 ModelPruning(
+                                     "l1_unstructured",
+                                     amount=compute_amount,
+                                     use_lottery_ticket_hypothesis=True)
+                             ],
                              **cfg.lightning)
 
         # print("NUMBER OF GPUs:", torch.cuda.device_count())
@@ -104,16 +120,16 @@ def main(cfg: DictConfig) -> None:
         trainer.fit(model, datamodule=mri_datamodule)
 
         # torch.save(model.state_dict(), "unet_test.pt")
-        trainer.save_checkpoint(f"arunet_{VER}_bag{i}.ckpt")
+        trainer.save_checkpoint(f"arunet_{VER}_bag{i}_lth.ckpt")
         # logger.experiment['model_checkpoints/arunet_c'].upload('arunet_v0c.ckpt')
-        logger.experiment.log_model(f"arunet_{VER}_bag{i}_ckpt",
-                                    f"arunet_{VER}_bag{i}.ckpt")
+        logger.experiment.log_model(f"arunet_{VER}_bag{i}_lth_ckpt",
+                                    f"arunet_{VER}_bag{i}_lth.ckpt")
 
         dummy_input = torch.randn(1, 1, 16, 16, 16)
         model.eval()
         torch.onnx.export(model,
                           dummy_input,
-                          f'arunet_{VER}_bag{i}.onnx',
+                          f'arunet_{VER}_bag{i}_lth.onnx',
                           input_names=['input'],
                           output_names=['output'],
                           dynamic_axes={
@@ -131,10 +147,8 @@ def main(cfg: DictConfig) -> None:
                               }
                           },
                           opset_version=13)
-        logger.experiment.log_model(f"arunet_{VER}_bag{i}_onnx",
-                                    f"arunet_{VER}_bag{i}.onnx")
-        SparseMLCallback.export_to_sparse_onnx(model, "sparse.onnx",
-                                               dummy_input)
+        logger.experiment.log_model(f"arunet_{VER}_bag{i}_lth_onnx",
+                                    f"arunet_{VER}_bag{i}_lth.onnx")
         # torch.onnx.export(model.quant,
         #                   dummy_input,
         #                   f'arunet_{VER}_bag{i}_quant.onnx',
