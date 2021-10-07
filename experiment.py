@@ -13,6 +13,7 @@ import torchio as tio
 from omegaconf import DictConfig
 # from neptune.new.integrations.pytorch_lightning import NeptuneLogger
 # from pytorch_lightning.callbacks import QuantizationAwareTraining
+from pytorch_lightning.callbacks import ModelPruning
 from pytorch_lightning.loggers import CometLogger
 from torch import nn, optim
 
@@ -93,7 +94,10 @@ def main(cfg: DictConfig) -> None:
                                   is_capsnet=is_capsnet)
 
         # print("cwd:", os.getcwd())
-        trainer = pl.Trainer(logger=logger, **cfg.lightning)
+        trainer = pl.Trainer(
+            logger=logger,
+            callbacks=[ModelPruning("l1_unstructured", amount=0.5)],
+            **cfg.lightning)
 
         # print("NUMBER OF GPUs:", torch.cuda.device_count())
 
