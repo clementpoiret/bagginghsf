@@ -14,6 +14,7 @@ from omegaconf import DictConfig
 # from neptune.new.integrations.pytorch_lightning import NeptuneLogger
 # from pytorch_lightning.callbacks import QuantizationAwareTraining
 from pytorch_lightning.callbacks import ModelPruning
+from pl_bolts.callbacks import SparseMLCallback
 from pytorch_lightning.loggers import CometLogger
 from torch import nn, optim
 
@@ -94,10 +95,9 @@ def main(cfg: DictConfig) -> None:
                                   is_capsnet=is_capsnet)
 
         # print("cwd:", os.getcwd())
-        trainer = pl.Trainer(
-            logger=logger,
-            callbacks=[ModelPruning("l1_unstructured", amount=0.5)],
-            **cfg.lightning)
+        trainer = pl.Trainer(logger=logger,
+                             callbacks=[SparseMLCallback("recal.config.yaml")],
+                             **cfg.lightning)
 
         # print("NUMBER OF GPUs:", torch.cuda.device_count())
 
@@ -133,6 +133,8 @@ def main(cfg: DictConfig) -> None:
                           opset_version=13)
         logger.experiment.log_model(f"arunet_{VER}_bag{i}_onnx",
                                     f"arunet_{VER}_bag{i}.onnx")
+        SparseMLCallback.export_to_sparse_onnx(model, "sparse.onnx",
+                                               dummy_input)
         # torch.onnx.export(model.quant,
         #                   dummy_input,
         #                   f'arunet_{VER}_bag{i}_quant.onnx',

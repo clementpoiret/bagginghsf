@@ -1,0 +1,186 @@
+version: 1.1.0
+
+modifiers:
+    - !GMPruningModifier
+        end_epoch: 171.0
+        final_sparsity: 0.95
+        global_sparsity: False
+        init_sparsity: 0.05
+        inter_func: cubic
+        leave_enabled: True
+        log_types: __ALL__
+        mask_type: unstructured
+        params: ['_model.encoders.3.basic_module.conv2.conv.weight']
+        phased: False
+        score_type: magnitude
+        start_epoch: 1.0
+        update_frequency: 4.25
+
+    - !GMPruningModifier
+        end_epoch: 171.0
+        final_sparsity: 0.78
+        global_sparsity: False
+        init_sparsity: 0.05
+        inter_func: cubic
+        leave_enabled: True
+        log_types: __ALL__
+        mask_type: unstructured
+        params: ['_model.encoders.2.basic_module.conv2.conv.weight']
+        phased: False
+        score_type: magnitude
+        start_epoch: 1.0
+        update_frequency: 4.25
+
+    - !GMPruningModifier
+        end_epoch: 171.0
+        final_sparsity: 0.57
+        global_sparsity: False
+        init_sparsity: 0.05
+        inter_func: cubic
+        leave_enabled: True
+        log_types: __ALL__
+        mask_type: unstructured
+        params: ['_model.decoders.2.basic_module.conv3.conv.weight']
+        phased: False
+        score_type: magnitude
+        start_epoch: 1.0
+        update_frequency: 4.25
+
+    - !GMPruningModifier
+        end_epoch: 171.0
+        final_sparsity: 0.79
+        global_sparsity: False
+        init_sparsity: 0.05
+        inter_func: cubic
+        leave_enabled: True
+        log_types: __ALL__
+        mask_type: unstructured
+        params: ['_model.encoders.2.basic_module.conv3.conv.weight', '_model.decoders.0.basic_module.conv1.conv.weight', '_model.decoders.0.basic_module.conv3.conv.weight']
+        phased: False
+        score_type: magnitude
+        start_epoch: 1.0
+        update_frequency: 4.25
+
+    - !GMPruningModifier
+        end_epoch: 171.0
+        final_sparsity: 0.87
+        global_sparsity: False
+        init_sparsity: 0.05
+        inter_func: cubic
+        leave_enabled: True
+        log_types: __ALL__
+        mask_type: unstructured
+        params: ['_model.encoders.3.basic_module.conv1.conv.weight']
+        phased: False
+        score_type: magnitude
+        start_epoch: 1.0
+        update_frequency: 4.25
+
+    - !GMPruningModifier
+        end_epoch: 171.0
+        final_sparsity: 0.7
+        global_sparsity: False
+        init_sparsity: 0.05
+        inter_func: cubic
+        leave_enabled: True
+        log_types: __ALL__
+        mask_type: unstructured
+        params: ['_model.encoders.1.basic_module.conv2.conv.weight', '_model.encoders.1.basic_module.conv3.conv.weight']
+        phased: False
+        score_type: magnitude
+        start_epoch: 1.0
+        update_frequency: 4.25
+
+    - !GMPruningModifier
+        end_epoch: 171.0
+        final_sparsity: 0.56
+        global_sparsity: False
+        init_sparsity: 0.05
+        inter_func: cubic
+        leave_enabled: True
+        log_types: __ALL__
+        mask_type: unstructured
+        params: ['_model.decoders.2.basic_module.conv1.conv.weight']
+        phased: False
+        score_type: magnitude
+        start_epoch: 1.0
+        update_frequency: 4.25
+
+    - !GMPruningModifier
+        end_epoch: 171.0
+        final_sparsity: 0.55
+        global_sparsity: False
+        init_sparsity: 0.05
+        inter_func: cubic
+        leave_enabled: True
+        log_types: __ALL__
+        mask_type: unstructured
+        params: ['_model.encoders.0.basic_module.conv2.conv.weight', '_model.encoders.0.basic_module.conv3.conv.weight', '_model.encoders.1.basic_module.conv1.conv.weight', '_model.decoders.2.basic_module.conv2.conv.weight']
+        phased: False
+        score_type: magnitude
+        start_epoch: 1.0
+        update_frequency: 4.25
+
+    - !GMPruningModifier
+        end_epoch: 171.0
+        final_sparsity: 0.91
+        global_sparsity: False
+        init_sparsity: 0.05
+        inter_func: cubic
+        leave_enabled: True
+        log_types: __ALL__
+        mask_type: unstructured
+        params: ['_model.encoders.3.basic_module.conv3.conv.weight']
+        phased: False
+        score_type: magnitude
+        start_epoch: 1.0
+        update_frequency: 4.25
+
+    - !GMPruningModifier
+        end_epoch: 171.0
+        final_sparsity: 0.77
+        global_sparsity: False
+        init_sparsity: 0.05
+        inter_func: cubic
+        leave_enabled: True
+        log_types: __ALL__
+        mask_type: unstructured
+        params: ['_model.decoders.0.basic_module.conv2.conv.weight']
+        phased: False
+        score_type: magnitude
+        start_epoch: 1.0
+        update_frequency: 4.25
+
+    - !GMPruningModifier
+        end_epoch: 171.0
+        final_sparsity: 0.69
+        global_sparsity: False
+        init_sparsity: 0.05
+        inter_func: cubic
+        leave_enabled: True
+        log_types: __ALL__
+        mask_type: unstructured
+        params: ['_model.decoders.1.basic_module.conv1.conv.weight', '_model.decoders.1.basic_module.conv2.conv.weight', '_model.decoders.1.basic_module.conv3.conv.weight']
+        phased: False
+        score_type: magnitude
+        start_epoch: 1.0
+        update_frequency: 4.25
+
+    - !GMPruningModifier
+        end_epoch: 171.0
+        final_sparsity: 0.71
+        global_sparsity: False
+        init_sparsity: 0.05
+        inter_func: cubic
+        leave_enabled: True
+        log_types: __ALL__
+        mask_type: unstructured
+        params: ['_model.encoders.2.basic_module.conv1.conv.weight']
+        phased: False
+        score_type: magnitude
+        start_epoch: 1.0
+        update_frequency: 4.25
+
+    - !EpochRangeModifier
+        end_epoch: 299.0
+        start_epoch: 0.0
